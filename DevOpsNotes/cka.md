@@ -16,7 +16,7 @@ it sotres data about the cluster advertise client url the url whhere etcd listen
 A controller is a process that continuously monitors the state of various components within the system, we have different controller to do different jobs like node controller is responsible for monitoring the status of the nodes and taking necessary actions to keep the application running. Replication controller are responsible for monitoring the replicas present on the nodes.
 
 - **Kube-scheduler**\
-scheduler decides which pod will go on which container.
+scheduler decides which pod will go on which node.
 
 ### **Worker node**
 - **kubelet**\
@@ -52,15 +52,13 @@ spec:
 Replica Set is the new name for replication controller selector is required in replicaset but not in replication controller
 
 
-## **labels and Selectors**
-
-
 ## **Deployments**
+
+Deployments are used to provide periodic upgrades to a pod
 
 `kubectl create deployment --image=ngnix nginx --dry-run=client -o yaml`
 
 `kubectl create deployment --image=ngnix nginx --dry-run=client -o yaml> nginx-deployment.yaml`
-
 
 ## **Services**
 
@@ -116,7 +114,12 @@ affinity:
 **nodeaffinity and taints&toleration**
 
 using nodeaffinity we cannot gurantee that other pods who do not have any affinity define will not land up on our node ex if i have lbel my node as blue and i have two pods in one i have nodeaffiniy set as blue and there is another pod on which i have defined no node affinity in this case the pod with blue node affinity will land on my node but the pod with no node affinity may also land on my node.\
-Similary when i define taint my pod with the toleration to that taint may be placed on the node where i have the taint or it may get placed on different node where there is not taint .
+Similary when i define taint my pod with the toleration to that taint may be placed on the node where i have the taint or it may get placed on different node where there is not taint.
+
+## **DaemonSets**
+
+daemonset make sure one copy of your pod is deployed on each node. example for monitoring.
+
 
 ## **Kubeclt commands for quick help**
 ____
@@ -126,5 +129,12 @@ kubectl get deployments
 kubectl get pods -o wide
 kubectl describe pod podname
 kubectl describe deployment deploymentname
+kubectl get <objectnamelike pod etc> --all-namespaces
+kubectl get events
 ```
-___
+to copy content of running pod into other yaml `kubectl get pod elephant -o yaml > test.yaml`_
+
+## **Troubleshoot**
+
+OOMkilled\
+this is generally due to the memory limit exceeds on the pod then we need to check the memory limit set for the pod
